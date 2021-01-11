@@ -10,6 +10,8 @@ import SceneKit
 import ARKit
 
 class ViewController: UIViewController, ARSCNViewDelegate {
+    
+    var diceArray = [SCNNode]()
 
     @IBOutlet var sceneView: ARSCNView!
     
@@ -47,17 +49,10 @@ class ViewController: UIViewController, ARSCNViewDelegate {
                 x: hitResult.worldTransform.columns.3.x,
                 y: hitResult.worldTransform.columns.3.y + diceNode.boundingSphere.radius,
                 z: hitResult.worldTransform.columns.3.z)
+            diceArray.append(diceNode)
             sceneView.scene.rootNode.addChildNode(diceNode)
-            
-            //set a random numbers for rotation of the dice
-            let randomX = Float(arc4random_uniform(4) + 1) * (Float.pi/2)
-            let randomZ = Float(arc4random_uniform(4) + 1) * (Float.pi/2)
-            //run it as animation
-            diceNode.runAction(SCNAction.rotateBy(
-                                x: CGFloat(randomX * 5),
-                                y: 0,
-                                z: CGFloat(randomZ * 5),
-                                duration: 0.5))
+    
+            roll(dice: diceNode)
         }
     }
         //set a horizontal plane
@@ -80,5 +75,35 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         
         node.addChildNode(planeNode)
     }
-
+    
+    func rollAll() {
+        if !diceArray.isEmpty {
+            for dice in diceArray {
+                roll(dice: dice)
+            }
+        }
+    }
+    
+    func roll(dice: SCNNode) {
+        //set a random numbers for rotation of the dice
+        let randomX = Float(arc4random_uniform(4) + 1) * (Float.pi/2)
+        let randomZ = Float(arc4random_uniform(4) + 1) * (Float.pi/2)
+        //run it as animation
+        dice.runAction(SCNAction.rotateBy(
+                            x: CGFloat(randomX * 5),
+                            y: 0,
+                            z: CGFloat(randomZ * 5),
+                            duration: 0.5))
+    }
+    
+    //click on a button to roll the dice
+    @IBAction func rollAgain(_ sender: UIBarButtonItem) {
+        rollAll()
+    }
+    
+    //shake the phone to roll all the dice as well
+    override func motionEnded(_ motion: UIEvent.EventSubtype, with event: UIEvent?) {
+        rollAll()
+    }
+    
 }
