@@ -46,10 +46,19 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         let planeAnchor = anchor as! ARPlaneAnchor
         let plane = SCNPlane(width: CGFloat(planeAnchor.extent.x), height: CGFloat(planeAnchor.extent.z))
         let planeNode = SCNNode()
+        
         //to set to the created horizontal plane
         planeNode.position = SCNVector3(x: planeAnchor.center.x, y: 0, z: planeAnchor.center.z)
+        
         //rotating by 90 degrees clock-wise
         planeNode.transform = SCNMatrix4MakeRotation(-Float.pi/2, 1, 0, 0)
+        
+        let gridMaterial = SCNMaterial()
+        gridMaterial.diffuse.contents = UIImage(named: "art.scnassets/grid.png")
+        plane.materials = [gridMaterial]
+        planeNode.geometry = plane
+        
+        node.addChildNode(planeNode)
     }
 
 }
